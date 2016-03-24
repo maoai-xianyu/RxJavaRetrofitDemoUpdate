@@ -11,6 +11,8 @@ import com.boxfish.ming.rxjavaretrofitdemo.entity.HttpResult;
 import com.boxfish.ming.rxjavaretrofitdemo.entity.Subject;
 import com.boxfish.ming.rxjavaretrofitdemo.http.HttpMethods;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,9 +34,38 @@ public class HttpResultActivity extends AppCompatActivity {
     }
 
 
-    @OnClick(R.id.clickLoad)
+    @OnClick({R.id.clickLoad,R.id.clickLoadNo})
     public void onClick(View view){
-        getMovie();
+        switch (view.getId()) {
+            case R.id.clickLoad:
+                getMovie();
+                break;
+            case R.id.clickLoadNo:
+                getMovieNo();
+                break;
+        }
+    }
+
+    private void getMovieNo() {
+
+        mSubscriber = new Subscriber<List<Subject>>() {
+            @Override
+            public void onCompleted() {
+                Toast.makeText(HttpResultActivity.this, "Get Top Movie Completed", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                mResult.setText(e.getMessage());
+            }
+
+            @Override
+            public void onNext(List<Subject> subjects) {
+                mResult.setText(subjects.toString());
+            }
+        };
+
+        HttpMethods.getInstance().getTopMovieHttpResultNo(mSubscriber,0,10);
     }
 
     private void getMovie(){

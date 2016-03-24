@@ -19,8 +19,10 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -95,6 +97,61 @@ public class HttpMethods {
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
+    }
+
+
+    /**
+     * HttpResult 封装 同时添加 错误信息
+     * @param subscriber
+     * @param start
+     * @param count
+     */
+    public void getTopMovieHttpResultNo(Subscriber<List<Subject>> subscriber, int start, int count){
+        mService.getTopMovieHttpResult(start, count)
+                .flatMap(new Func1<HttpResult<List<Subject>>, Observable<List<Subject>>>() {
+                    @Override
+                    public Observable<List<Subject>> call(HttpResult<List<Subject>> httpResult) {
+                        return flatResult(httpResult);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
+    static <T> Observable<T> flatResult(final HttpResult<T> result) {
+        return Observable.create(new Observable.OnSubscribe<T>() {
+            @Override
+            public void call(Subscriber<? super T> subscriber) {
+
+                if (result.getCount() == 0) {
+                    subscriber.onError(new ApiException(ApiException.USER_NOT_EXIST));
+                } else{
+                    subscriber.onNext(result.getSubjects());
+                }
+
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+
+
+    /**
+     * 用来统一处理Http的resultCode,并将HttpResult的Data部分剥离出来返回给subscriber
+     *
+     * @param <T>   Subscriber真正需要的数据类型，也就是Data部分的数据类型
+     */
+    private class HttpResultFunc<T> implements Func1<HttpResult<T>, T> {
+
+        @Override
+        public T call(HttpResult<T> httpResult) {
+            if (httpResult.getCount() == 0) {
+                throw new ApiException(100);
+            }
+            return httpResult.getSubjects();
+        }
     }
 
 }
