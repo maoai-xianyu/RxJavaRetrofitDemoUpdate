@@ -23,6 +23,10 @@ import retrofit2.http.Query;
 // +----------------------------------------------------------------------
 // | CopyRight:  http://www.boxfish.cn
 // +----------------------------------------------------------------------
+
+/**
+ * 自己定义的请求方式
+ */
 public class HttpUtils {
 
     public interface Service{
