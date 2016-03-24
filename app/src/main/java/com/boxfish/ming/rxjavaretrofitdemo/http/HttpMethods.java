@@ -8,8 +8,11 @@ package com.boxfish.ming.rxjavaretrofitdemo.http;
 // | CopyRight:  http://www.boxfish.cn
 // +----------------------------------------------------------------------
 
+import com.boxfish.ming.rxjavaretrofitdemo.entity.HttpResult;
 import com.boxfish.ming.rxjavaretrofitdemo.entity.MovieEntity;
+import com.boxfish.ming.rxjavaretrofitdemo.entity.Subject;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -65,6 +68,12 @@ public class HttpMethods {
         return SingletonHolder.INSTANCE;
     }
 
+    /**
+     * RxJava 封装
+     * @param subscriber
+     * @param start
+     * @param count
+     */
     public void getTopMovie(Subscriber<MovieEntity> subscriber,int start,int count){
         mService.getTopMovieRxJava(start,count)
                 .subscribeOn(Schedulers.io())
@@ -72,4 +81,20 @@ public class HttpMethods {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
     }
+
+
+    /**
+     * HttpResult 封装
+     * @param subscriber
+     * @param start
+     * @param count
+     */
+    public void getTopMovieHttpResult(Subscriber<HttpResult<List<Subject>>> subscriber, int start, int count){
+        mService.getTopMovieHttpResult(start,count)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
 }

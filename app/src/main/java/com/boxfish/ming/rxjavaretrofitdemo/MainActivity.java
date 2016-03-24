@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.boxfish.ming.rxjavaretrofitdemo.activity.HttpResultActivity;
 import com.boxfish.ming.rxjavaretrofitdemo.activity.MovieActivity;
 import com.boxfish.ming.rxjavaretrofitdemo.entity.MovieEntity;
 import com.boxfish.ming.rxjavaretrofitdemo.http.HttpMethods;
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.click_me_JumpEntity:
+
+                startActivity(new Intent(this, HttpResultActivity.class));
                 break;
 
             case R.id.click_me_JumpHttp:

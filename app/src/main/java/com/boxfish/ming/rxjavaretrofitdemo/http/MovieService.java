@@ -1,6 +1,10 @@
 package com.boxfish.ming.rxjavaretrofitdemo.http;
 
+import com.boxfish.ming.rxjavaretrofitdemo.entity.HttpResult;
 import com.boxfish.ming.rxjavaretrofitdemo.entity.MovieEntity;
+import com.boxfish.ming.rxjavaretrofitdemo.entity.Subject;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -34,4 +38,13 @@ public interface MovieService {
      */
     @GET("top250")
     Observable<MovieEntity> getTopMovieRxJava(@Query("start") int start, @Query("count") int count);
+
+    /**
+     * 使用范型封装数据
+     * @param start
+     * @param count
+     * @return
+     */
+    @GET("top250")
+    Observable<HttpResult<List<Subject>>> getTopMovieHttpResult(@Query("start") int start, @Query("count") int count);
 }

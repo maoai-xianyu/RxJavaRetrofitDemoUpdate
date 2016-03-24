@@ -20,6 +20,8 @@
         </activity>
         <activity android:name=".activity.MovieActivity">
         </activity>
+        <activity android:name=".activity.HttpResultActivity">
+        </activity>
     </application>
 
 </manifest>
