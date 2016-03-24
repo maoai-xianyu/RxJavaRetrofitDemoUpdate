@@ -60,24 +60,25 @@ public class HttpMethods {
     }
 
     //在访问HttpMethods时创建单例
-    private static class SingletonHolder{
+    private static class SingletonHolder {
         private static final HttpMethods INSTANCE = new HttpMethods();
     }
 
 
     //获取单例
-    public static HttpMethods getInstance(){
+    public static HttpMethods getInstance() {
         return SingletonHolder.INSTANCE;
     }
 
     /**
      * RxJava 封装
+     *
      * @param subscriber
      * @param start
      * @param count
      */
-    public void getTopMovie(Subscriber<MovieEntity> subscriber,int start,int count){
-        mService.getTopMovieRxJava(start,count)
+    public void getTopMovie(Subscriber<MovieEntity> subscriber, int start, int count) {
+        mService.getTopMovieRxJava(start, count)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -87,12 +88,13 @@ public class HttpMethods {
 
     /**
      * HttpResult 封装
+     *
      * @param subscriber
      * @param start
      * @param count
      */
-    public void getTopMovieHttpResult(Subscriber<HttpResult<List<Subject>>> subscriber, int start, int count){
-        mService.getTopMovieHttpResult(start,count)
+    public void getTopMovieHttpResult(Subscriber<HttpResult<List<Subject>>> subscriber, int start, int count) {
+        mService.getTopMovieHttpResult(start, count)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -102,11 +104,12 @@ public class HttpMethods {
 
     /**
      * HttpResult 封装 同时添加 错误信息
+     *
      * @param subscriber
      * @param start
      * @param count
      */
-    public void getTopMovieHttpResultNo(Subscriber<List<Subject>> subscriber, int start, int count){
+    public void getTopMovieHttpResultNo(Subscriber<List<Subject>> subscriber, int start, int count) {
         mService.getTopMovieHttpResult(start, count)
                 .flatMap(new Func1<HttpResult<List<Subject>>, Observable<List<Subject>>>() {
                     @Override
@@ -127,21 +130,19 @@ public class HttpMethods {
 
                 if (result.getCount() == 0) {
                     subscriber.onError(new ApiException(ApiException.USER_NOT_EXIST));
-                } else{
+                } else {
                     subscriber.onNext(result.getSubjects());
                 }
-
                 subscriber.onCompleted();
             }
         });
     }
 
 
-
     /**
      * 用来统一处理Http的resultCode,并将HttpResult的Data部分剥离出来返回给subscriber
      *
-     * @param <T>   Subscriber真正需要的数据类型，也就是Data部分的数据类型
+     * @param <T> Subscriber真正需要的数据类型，也就是Data部分的数据类型
      */
     private class HttpResultFunc<T> implements Func1<HttpResult<T>, T> {
 
@@ -152,6 +153,27 @@ public class HttpMethods {
             }
             return httpResult.getSubjects();
         }
+    }
+
+
+    //-------------------------------------------------------------------------------------------------------
+
+    /**
+     * 网络请求的优化
+     */
+    public void getTopMovieHttpFinally(Subscriber<List<Subject>> subscriber, int start, int count) {
+
+        Observable observable = mService.getTopMovieHttpResult(start, count)
+                .map(new HttpResultFunc<List<Subject>>());
+
+        toSubscribe(observable, subscriber);
+    }
+
+    private <T> void toSubscribe(Observable<T> o, Subscriber<T> s) {
+        o.subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s);
     }
 
 }

@@ -49,7 +49,9 @@ public class DialogActivity extends AppCompatActivity {
 
     private void getTopMovie() {
 
-        HttpMethods.getInstance().getTopMovieHttpResultNo(new ProgressSubscriber(getTopMovieOnNext, this), 0, 10);
+        //HttpMethods.getInstance().getTopMovieHttpResultNo(new ProgressSubscriber(getTopMovieOnNext, this), 0, 10);
+
+        HttpMethods.getInstance().getTopMovieHttpFinally(new ProgressSubscriber(getTopMovieOnNext,this),0,10);
 
     }
 }
