@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.boxfish.ming.rxjavaretrofitdemo.activity.DialogActivity;
 import com.boxfish.ming.rxjavaretrofitdemo.activity.HttpResultActivity;
 import com.boxfish.ming.rxjavaretrofitdemo.activity.MovieActivity;
 import com.boxfish.ming.rxjavaretrofitdemo.entity.MovieEntity;
@@ -98,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.click_me_JumpHttp:
+                startActivity(new Intent(this, DialogActivity.class));
+
                 break;
             default:
                 break;
